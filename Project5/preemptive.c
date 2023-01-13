@@ -3,8 +3,7 @@
 #include "preemptive.h"
 
 /*
- * @@@ [2 pts] declare the static globals here using 
- *        __data __at (address) type name; syntax
+ * declare the static global variables here using __data __at (address) type name; syntax
  * manually allocate the addresses of these variables, for
  * - saved stack pointers (MAXTHREADS)
  * - current thread ID
@@ -18,8 +17,14 @@ __data __at (0x34) char mask;
 __data __at (0x36) char sp_temp;
 __data __at (0x37) char new_thread;
 
-
-
+/*
+ * define a macro for saving the context of the current thread by
+ * 1) push ACC, B register, Data pointer registers (DPL, DPH), PSW 
+ * 2) save SP into the saved Stack Pointers array
+ *   as indexed by the current thread ID.
+ * Note that 1) should be written in assembly, 
+ *     while 2) can be written in either assembly or C
+ */
 
 #define SAVESTATE \
             __asm \
@@ -32,7 +37,14 @@ __data __at (0x37) char new_thread;
             saved_sp[cur_thread] = SP;\
 
 
-
+/*
+ * define a macro for restoring the context of the current thread by
+ * essentially doing the reverse of SAVESTATE:
+ * 1) assign SP to the saved SP from the saved stack pointer array
+ * 2) pop the registers PSW, data pointer registers, B reg, and ACC
+ * Again, popping must be done in assembly but restoring SP can be
+ * done in either C or assembly.
+ */
 
 
 #define RESTORESTATE \
@@ -62,7 +74,7 @@ unsigned char now(void){
 
 void Bootstrap(void) {
       mask = 0;
-      TMOD = 0;  // timer 0 mode 0
+      TMOD = 0;  // timer 0 mode 0 (timer 1 is already used by UART)
       IE = 0x82;  // enable timer 0 interrupt; keep consumer polling
                 // EA  -  ET2  ES  ET1  EX1  ET0  EX0
       TR0 = 1; // set bit TR0 to start running timer 0
@@ -70,9 +82,11 @@ void Bootstrap(void) {
       RESTORESTATE;
       
 }
+// ISR for timer 0, serves purpose for preemption
 void myTimer0Handler(){
     EA = 0;
     SAVESTATE;
+    // preserve value of registers(RO-R7 values can't be restored by RESTORESTATE)
     __asm
         MOV A, R0
         PUSH ACC
@@ -101,6 +115,15 @@ void myTimer0Handler(){
     else if( cur_thread == 2 ){if( mask&4 ){break;}}
     else if( cur_thread == 3 ){if( mask&8 ){break;}}   
     } while (1);
+         /*
+      do{
+         cur_thread = (cur_thread < 3 ) ?  (cur_thread+1) : 0;
+         if( mask & (1<<cur_thread) ){
+            break;
+         }      
+      } while (1);
+      */
+    
     __asm
         POP ACC
         MOV R7, A
@@ -120,9 +143,9 @@ void myTimer0Handler(){
         MOV R0, A
     __endasm;  
     RESTORESTATE;
-    EA = 1;
+    EA = 1;                  // enable interrupts
     __asm 
-        RETI
+        RETI                // return from the interrupt
     __endasm;
        
 }
@@ -136,10 +159,9 @@ void myTimer0Handler(){
 ThreadID ThreadCreate(FunctionPtr fp) {
         EA = 0;
         // a., b.
-         if( mask == 15 ) //mask = 0b1111, four thread
-            return -1;
+         if( mask == 15 ) // mask = 0b1111, max threads = four 
+            return -1;    // invalid thread ID
          
-
         if( !( mask & 1 ) ){
             mask = mask | 1;
             new_thread = 0;
@@ -153,10 +175,10 @@ ThreadID ThreadCreate(FunctionPtr fp) {
             mask = mask | 8;
             new_thread = 3;
         }
-         //c.
+         //c. save current SP in tmp
          sp_temp = SP;
-         SP = (0x3F) + (0x10) * new_thread;
-         //d.
+         SP = (0x3F) + (0x10) * new_thread;     // set to the starting location for new thread
+         //d.   push the return address fp
          // DPL = (int)fp & (0x00FF);
          // DPH = (int)fp & (0xFF00);
          __asm
@@ -167,7 +189,7 @@ ThreadID ThreadCreate(FunctionPtr fp) {
 
 
     
-         //e.
+         //e.initialize the registers to 0, so we assign a register to 0 and push it four times for ACC, B, DPL, DPH.
          __asm 
             ANL A, #0
             PUSH ACC
@@ -177,15 +199,20 @@ ThreadID ThreadCreate(FunctionPtr fp) {
          __endasm;
   
 
-         //f.
+        /*f
+            set PSW to 
+            00000000B for thread 0, 00001000B for thread 1,
+            00010000B for thread 2, 00011000B for thread 3.
+         */
          PSW = new_thread << 3;
          __asm 
             PUSH PSW
          __endasm;
 
-         // g.
+        // g. save current SP to stacked pointer array with newly created ID
+         
          saved_sp[new_thread] = SP;
-         //h.
+        // h. set SP to the location before creating of new thread
          SP = sp_temp;
          //i.
         EA = 1;
@@ -224,6 +251,10 @@ void ThreadYield(void) {
  */
 void ThreadExit(void) {
         EA = 0;
+        // delete thread by clearing the bit for the current thread from the bit mask ?
+        // if cur_thread = 0, mask -=0b0001; cur_thread = 1, mask-=0b0010 ... ?
+        
+        // find next thread to run and set current thread to it?
         if(cur_thread == 0) mask = mask - 1;
         else if( cur_thread == 1 )mask = mask - 2;
         else if( cur_thread == 2 )mask = mask - 4;
