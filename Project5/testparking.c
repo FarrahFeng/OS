@@ -1,3 +1,4 @@
+
 #include <8051.h>
 #include "preemptive.h"
 
@@ -96,7 +97,7 @@ void main(void) {
         while(time < 0x1f){
             SemaphoreWaitBody(next_car, L(__COUNTER__) );
             car_id = ThreadCreate( Producer );
-            // if( car == tok2 || car == tok ){
+            // if( car == Token2 || car == Token ){
             //     car = (car == '5') ? '1' : car+1;
             // }
             car_name[ car_id  ] = car;

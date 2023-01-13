@@ -62,11 +62,7 @@ __data __at (0x37) char new_thread;
 
 extern void main(void);
 
-// void delay(unsigned char n){
-//     time_temp[cur_thread] = time + n;
-//     while( time_temp[cur_thread] != time ){}
-//     //for(int i = 0 ; i<3000;i++){}
-// }
+// return current time
 unsigned char now(void){
     return time;
 }
@@ -77,6 +73,7 @@ void Bootstrap(void) {
       IE = 0x82;  // enable timer 0 interrupt; keep consumer polling
                 // EA  -  ET2  ES  ET1  EX1  ET0  EX0
       TR0 = 1; // set bit TR0 to start running timer 0
+      
       cur_thread = ThreadCreate( main );
       RESTORESTATE;
       
@@ -104,8 +101,9 @@ void myTimer0Handler(){
         MOV A, R7
         PUSH ACC
     __endasm;
-    time_sec = time_sec + 1;
-    if(time_sec==8){ time = time + 1; time_sec = 0;}
+
+    timer = timer + 1;
+    if(timer==8){ time = time + 1; timer = 0;}
     
     do{
     cur_thread = (cur_thread < 3 ) ?  cur_thread+1 : 0;

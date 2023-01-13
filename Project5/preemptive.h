@@ -1,3 +1,4 @@
+#include <8051.h>
 #ifndef __PREEMPTIVE_H__
 #define __PREEMPTIVE_H__
 
@@ -6,8 +7,13 @@
 
 __data __at (0x35) char cur_thread;
 __data __at (0x39) unsigned char time;
-__data __at (0x24) unsigned char time_sec;
+__data __at (0x24) unsigned char timer;
 __data __at (0x20) unsigned char time_temp[4]; // 0~3
+
+/*
+delay n time unit, n:unsigned char (larger than 1 second is not usefuls)
+not an exact delay but is a delay for “at least n time units” and “less than (n + 0.5) time units” 
+*/ 
 
 #define delay(n)\
         time_temp[cur_thread] = time + n;\
