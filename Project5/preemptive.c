@@ -46,7 +46,6 @@ __data __at (0x37) char new_thread;
  * done in either C or assembly.
  */
 
-
 #define RESTORESTATE \
             SP = saved_sp[cur_thread];\
             __asm \
@@ -115,7 +114,7 @@ void myTimer0Handler(){
     else if( cur_thread == 2 ){if( mask&4 ){break;}}
     else if( cur_thread == 3 ){if( mask&8 ){break;}}   
     } while (1);
-         /*
+      /*
       do{
          cur_thread = (cur_thread < 3 ) ?  (cur_thread+1) : 0;
          if( mask & (1<<cur_thread) ){
@@ -123,7 +122,7 @@ void myTimer0Handler(){
          }      
       } while (1);
       */
-    
+
     __asm
         POP ACC
         MOV R7, A
@@ -159,9 +158,10 @@ void myTimer0Handler(){
 ThreadID ThreadCreate(FunctionPtr fp) {
         EA = 0;
         // a., b.
-         if( mask == 15 ) // mask = 0b1111, max threads = four 
-            return -1;    // invalid thread ID
+         if( mask == 15 )   // mask = 0b1111, max threads = four 
+            return -1;      // invalid thread ID
          
+
         if( !( mask & 1 ) ){
             mask = mask | 1;
             new_thread = 0;
@@ -177,8 +177,8 @@ ThreadID ThreadCreate(FunctionPtr fp) {
         }
          //c. save current SP in tmp
          sp_temp = SP;
-         SP = (0x3F) + (0x10) * new_thread;     // set to the starting location for new thread
-         //d.   push the return address fp
+         SP = (0x3F) + (0x10) * new_thread; // set to the starting location for new thread
+         //d. push the return address fp
          // DPL = (int)fp & (0x00FF);
          // DPH = (int)fp & (0xFF00);
          __asm
@@ -210,7 +210,6 @@ ThreadID ThreadCreate(FunctionPtr fp) {
          __endasm;
 
         // g. save current SP to stacked pointer array with newly created ID
-         
          saved_sp[new_thread] = SP;
         // h. set SP to the location before creating of new thread
          SP = sp_temp;

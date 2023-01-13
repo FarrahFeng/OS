@@ -307,8 +307,6 @@ Symbol Table
     _TXD                                                        =  0000B1 G
     _ThreadCreate                                                  ****** GX
     _ThreadExit                                                    ****** GX
-    _Token                                                      =  00003B G
-    _Token2                                                     =  00003F G
     _WR                                                         =  0000B6 G
   E __interrupt_vect                                               000000 R
  17 __mcs51_genRAMCLEAR                                            00023D GR
@@ -331,6 +329,8 @@ Symbol Table
     _time_sec                                                   =  000024 G
     _time_temp                                                  =  000020 G
  17 _timer0_ISR                                                    000240 GR
+    _tok                                                        =  00003B G
+    _tok2                                                       =  00003F G
     a                                                           =  0000E0 L
     a.0                                                         =  0000E0 L
     a.1                                                         =  0000E1 L

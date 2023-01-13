@@ -3,29 +3,29 @@
 #include "preemptive.h"
 
 __data __at (0x3A) char buffer;
-__data __at (0x3B) char Token;
+__data __at (0x3B) char tok;
 __data __at (0x3C) char full;
 __data __at (0x3D) char mutex;
 __data __at (0x3E) char empty;
-__data __at (0x3F) char Token2;
-__data __at (0x2A) char turn;
+__data __at (0x3F) char tok2;
+__data __at (0x2A) char turn1;
 __data __at (0x2B) char turn2;
 
 #define L(x) LABEL(x)
 #define LABEL(x) x##$
 
 void Producer1(void) {
-		Token = 'A';
+		tok = 'A';
         while (1) {
                 /* @@@ [6 pt]
                  * wait for the buffer to be available, 
                  * and then write the new data into the buffer */
-                SemaphoreWaitBody(turn,  L(__COUNTER__));
+                SemaphoreWaitBody(turn1,  L(__COUNTER__));
                 SemaphoreWaitBody(empty, L(__COUNTER__) );
                 SemaphoreWaitBody(mutex, L(__COUNTER__) );
                 __critical{
-                buffer = Token;
-                Token = ( Token == 'Z' ) ? 'A' :  Token + 1;
+                buffer = tok;
+                tok = ( tok == 'Z' ) ? 'A' :  tok + 1;
                 //P1 = 0x0;
                 }
                 SemaphoreSignal(mutex);
@@ -35,7 +35,7 @@ void Producer1(void) {
         }
 }
 void Producer2(void) {
-		Token2 = '0';
+		tok2 = '0';
         while (1) {
                 /* @@@ [6 pt]
                  * wait for the buffer to be available, 
@@ -44,13 +44,13 @@ void Producer2(void) {
                 SemaphoreWaitBody(empty, L(__COUNTER__) );
                 SemaphoreWaitBody(mutex, L(__COUNTER__) );
                 __critical{
-                buffer = Token2;
-                Token2 = ( Token2 == '9' ) ? '0' :  Token2 + 1;
+                buffer = tok2;
+                tok2 = ( tok2 == '9' ) ? '0' :  tok2 + 1;
                 //P1 = 0x5;
                 }
                 SemaphoreSignal(mutex);
                 SemaphoreSignal(full);
-                SemaphoreSignal(turn);
+                SemaphoreSignal(turn1);
                 
         }
 }
@@ -82,9 +82,14 @@ void main(void) {
         SemaphoreCreate(full, 0);
         SemaphoreCreate(mutex, 1);
         SemaphoreCreate(empty,1);
-        SemaphoreCreate(turn, 0);
+        //order: A0B1
+        SemaphoreCreate(turn1, 1); 
+        SemaphoreCreate(turn2, 0);
+        /*
+        order: 0A1B
+        SemaphoreCreate(turn1, 0); 
         SemaphoreCreate(turn2, 1);
-        
+        */
         
         ThreadCreate( Producer1 );
         ThreadCreate( Producer2 );

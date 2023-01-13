@@ -22,7 +22,7 @@ test3threads.hex:   $(C_OBJECTS) $(ASM_OBJECTS)
 				$(CC) $(LDFLAGS) -o test3threads.hex $(C_OBJECTS)
 
 clean:
-	del *.hex *.ihx *.lnk *.lst *.map *.mem *.rel *.rst *.sym *.asm *.lk
+	rm *.hex *.ihx *.lnk *.lst *.map *.mem *.rel *.rst *.sym *.asm *.lk
 
 %.rel:  %.c    preemptive.h Makefile
 	$(CC) $(CFLAGS) $<

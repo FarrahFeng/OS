@@ -116,11 +116,11 @@
 	.globl _car_id
 	.globl _car_name
 	.globl _id
-	.globl _Token2
+	.globl _tok2
 	.globl _empty
 	.globl _mutex
 	.globl _car
-	.globl _Token
+	.globl _tok
 	.globl _next_car
 	.globl _time_temp
 	.globl _time_sec
@@ -246,11 +246,11 @@ _time	=	0x0039
 _time_sec	=	0x0024
 _time_temp	=	0x0020
 _next_car	=	0x003a
-_Token	=	0x003b
+_tok	=	0x003b
 _car	=	0x003c
 _mutex	=	0x003d
 _empty	=	0x003e
-_Token2	=	0x003f
+_tok2	=	0x003f
 _id	=	0x002a
 _car_name	=	0x002b
 _car_id	=	0x002f
@@ -342,7 +342,7 @@ __sdcc_program_startup:
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'Producer'
 ;------------------------------------------------------------
-;	testparking.c:37: void Producer(void) {
+;	testparking.c:38: void Producer(void) {
 ;	-----------------------------------------
 ;	 function Producer
 ;	-----------------------------------------
@@ -355,30 +355,30 @@ _Producer:
 	ar2 = 0x02
 	ar1 = 0x01
 	ar0 = 0x00
-;	testparking.c:42: SemaphoreWaitBody(empty, L(__COUNTER__) );
+;	testparking.c:44: SemaphoreWaitBody(empty, L(__COUNTER__) );
 		0$:
 	MOV A, _empty 
 	JZ 0$ 
 	JB ACC.7, 0$ 
 	dec _empty 
-;	testparking.c:43: SemaphoreWaitBody(mutex, L(__COUNTER__) );
+;	testparking.c:45: SemaphoreWaitBody(mutex, L(__COUNTER__) );
 		1$:
 	MOV A, _mutex 
 	JZ 1$ 
 	JB ACC.7, 1$ 
 	dec _mutex 
-;	testparking.c:44: EA = 0;
+;	testparking.c:46: EA = 0;
 ;	assignBit
 	clr	_EA
-;	testparking.c:45: if( Token == '0' ){ 
+;	testparking.c:47: if( tok == '0' ){ 
 	mov	a,#0x30
-	cjne	a,_Token,00134$
-;	testparking.c:46: Token = car_name[cur_thread];
+	cjne	a,_tok,00134$
+;	testparking.c:48: tok = car_name[cur_thread];
 	mov	a,_cur_thread
 	add	a,#_car_name
 	mov	r1,a
-	mov	_Token,@r1
-;	testparking.c:47: print(car_name[cur_thread],'i');
+	mov	_tok,@r1
+;	testparking.c:49: print(car_name[cur_thread],'i');
 	orl	_TMOD,#0x20
 	mov	_TH1,#0xfa
 	mov	_SCON,#0x50
@@ -426,15 +426,15 @@ _Producer:
 	mov	_id,a
 	sjmp	00175$
 00134$:
-;	testparking.c:48: }else if( Token2 == '0' ){
+;	testparking.c:50: }else if( tok2 == '0' ){
 	mov	a,#0x30
-	cjne	a,_Token2,00135$
-;	testparking.c:49: Token2 = car_name[cur_thread];
+	cjne	a,_tok2,00135$
+;	testparking.c:51: tok2 = car_name[cur_thread];
 	mov	a,_cur_thread
 	add	a,#_car_name
 	mov	r1,a
-	mov	_Token2,@r1
-;	testparking.c:50: print(car_name[cur_thread],'i');
+	mov	_tok2,@r1
+;	testparking.c:52: print(car_name[cur_thread],'i');
 	orl	_TMOD,#0x20
 	mov	_TH1,#0xfa
 	mov	_SCON,#0x50
@@ -480,12 +480,12 @@ _Producer:
 	mov	_id,a
 	sjmp	00178$
 00135$:
-;	testparking.c:52: EA = 1;
+;	testparking.c:54: EA = 1;
 ;	assignBit
 	setb	_EA
-;	testparking.c:53: SemaphoreSignal(mutex);
+;	testparking.c:55: SemaphoreSignal(mutex);
 	INC _mutex 
-;	testparking.c:55: delay(2);
+;	testparking.c:57: delay(2);
 	mov	a,_cur_thread
 	add	a,#_time_temp
 	mov	r1,a
@@ -499,19 +499,19 @@ _Producer:
 	mov	r1,a
 	mov	a,@r1
 	cjne	a,_time,00136$
-;	testparking.c:57: EA = 0;
+;	testparking.c:59: EA = 0;
 ;	assignBit
 	clr	_EA
-;	testparking.c:58: if( Token == car_name[cur_thread] ){
+;	testparking.c:60: if( tok == car_name[cur_thread] ){
 	mov	a,_cur_thread
 	add	a,#_car_name
 	mov	r1,a
 	mov	a,@r1
 	mov	r7,a
-	cjne	a,_Token,00172$
-;	testparking.c:59: Token = '0';
-	mov	_Token,#0x30
-;	testparking.c:60: print(car_name[cur_thread], 'o');
+	cjne	a,_tok,00172$
+;	testparking.c:61: tok = '0';
+	mov	_tok,#0x30
+;	testparking.c:62: print(car_name[cur_thread], 'o');
 	orl	_TMOD,#0x20
 	mov	_TH1,#0xfa
 	mov	_SCON,#0x50
@@ -559,16 +559,16 @@ _Producer:
 	mov	_id,a
 	sjmp	00181$
 00172$:
-;	testparking.c:61: }else if( Token2 == car_name[cur_thread] ){ 
+;	testparking.c:63: }else if( tok2 == car_name[cur_thread] ){ 
 	mov	a,_cur_thread
 	add	a,#_car_name
 	mov	r1,a
 	mov	a,@r1
 	mov	r7,a
-	cjne	a,_Token2,00173$
-;	testparking.c:62: Token2 = '0';
-	mov	_Token2,#0x30
-;	testparking.c:63: print(car_name[cur_thread], 'o');
+	cjne	a,_tok2,00173$
+;	testparking.c:64: tok2 = '0';
+	mov	_tok2,#0x30
+;	testparking.c:65: print(car_name[cur_thread], 'o');
 	orl	_TMOD,#0x20
 	mov	_TH1,#0xfa
 	mov	_SCON,#0x50
@@ -614,100 +614,100 @@ _Producer:
 	mov	_id,a
 	sjmp	00184$
 00173$:
-;	testparking.c:65: EA = 1;
+;	testparking.c:67: EA = 1;
 ;	assignBit
 	setb	_EA
-;	testparking.c:66: SemaphoreSignal(empty);
+;	testparking.c:68: SemaphoreSignal(empty);
 	INC _empty 
-;	testparking.c:67: SemaphoreSignal(next_car);
+;	testparking.c:69: SemaphoreSignal(next_car);
 	INC _next_car 
-;	testparking.c:68: ThreadExit();
-;	testparking.c:70: } 
+;	testparking.c:70: ThreadExit();
+;	testparking.c:72: } 
 	ljmp	_ThreadExit
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'main'
 ;------------------------------------------------------------
-;	testparking.c:72: void main(void) {
+;	testparking.c:74: void main(void) {
 ;	-----------------------------------------
 ;	 function main
 ;	-----------------------------------------
 _main:
-;	testparking.c:73: SemaphoreCreate(mutex, 1);
+;	testparking.c:75: SemaphoreCreate(mutex, 1);
 	mov	_mutex,#0x01
-;	testparking.c:74: SemaphoreCreate(empty,2);
+;	testparking.c:76: SemaphoreCreate(empty,2);
 	mov	_empty,#0x02
-;	testparking.c:75: SemaphoreCreate(next_car, 0);
+;	testparking.c:77: SemaphoreCreate(next_car, 0);
 	mov	_next_car,#0x00
-;	testparking.c:77: EA = 1;
+;	testparking.c:79: EA = 1;
 ;	assignBit
 	setb	_EA
-;	testparking.c:79: Token = '0';
-	mov	_Token,#0x30
-;	testparking.c:80: Token2 = '0';
-	mov	_Token2,#0x30
-;	testparking.c:81: car = '1';
+;	testparking.c:81: tok = '0';
+	mov	_tok,#0x30
+;	testparking.c:82: tok2 = '0';
+	mov	_tok2,#0x30
+;	testparking.c:83: car = '1';
 	mov	_car,#0x31
-;	testparking.c:83: car_id = ThreadCreate( Producer );
+;	testparking.c:85: car_id = ThreadCreate( Producer );
 	mov	dptr,#_Producer
 	lcall	_ThreadCreate
 	mov	_car_id,dpl
-;	testparking.c:84: car_name[ car_id ] = car;
+;	testparking.c:86: car_name[ car_id ] = car;
 	mov	a,_car_id
 	add	a,#_car_name
 	mov	r0,a
 	mov	@r0,_car
-;	testparking.c:85: car = car+1;
+;	testparking.c:87: car = car+1;
 	mov	a,_car
 	inc	a
 	mov	_car,a
-;	testparking.c:87: car_id = ThreadCreate( Producer );
+;	testparking.c:89: car_id = ThreadCreate( Producer );
 	mov	dptr,#_Producer
 	lcall	_ThreadCreate
 	mov	_car_id,dpl
-;	testparking.c:88: car_name[ car_id  ] = car;
+;	testparking.c:90: car_name[ car_id  ] = car;
 	mov	a,_car_id
 	add	a,#_car_name
 	mov	r0,a
 	mov	@r0,_car
-;	testparking.c:89: car = car+1;
+;	testparking.c:91: car = car+1;
 	mov	a,_car
 	inc	a
 	mov	_car,a
-;	testparking.c:91: car_id = ThreadCreate( Producer );
+;	testparking.c:93: car_id = ThreadCreate( Producer );
 	mov	dptr,#_Producer
 	lcall	_ThreadCreate
 	mov	_car_id,dpl
-;	testparking.c:92: car_name[ car_id  ] = car;
+;	testparking.c:94: car_name[ car_id  ] = car;
 	mov	a,_car_id
 	add	a,#_car_name
 	mov	r0,a
 	mov	@r0,_car
-;	testparking.c:93: car = car+1;
+;	testparking.c:95: car = car+1;
 	mov	a,_car
 	mov	r7,a
 	inc	a
 	mov	_car,a
-;	testparking.c:94: while(time < 0x1f){
+;	testparking.c:96: while(time < 0x1f){
 00101$:
 	mov	a,#0x100 - 0x1f
 	add	a,_time
 	jc	00103$
-;	testparking.c:95: SemaphoreWaitBody(next_car, L(__COUNTER__) );
+;	testparking.c:97: SemaphoreWaitBody(next_car, L(__COUNTER__) );
 		2$:
 	MOV A, _next_car 
 	JZ 2$ 
 	JB ACC.7, 2$ 
 	dec _next_car 
-;	testparking.c:96: car_id = ThreadCreate( Producer );
+;	testparking.c:98: car_id = ThreadCreate( Producer );
 	mov	dptr,#_Producer
 	lcall	_ThreadCreate
 	mov	_car_id,dpl
-;	testparking.c:100: car_name[ car_id  ] = car;
+;	testparking.c:102: car_name[ car_id  ] = car;
 	mov	a,_car_id
 	add	a,#_car_name
 	mov	r0,a
 	mov	@r0,_car
-;	testparking.c:101: car = (car == '5') ? '1' : car+1;
+;	testparking.c:103: car = (car == '5') ? '1' : car+1;
 	mov	a,#0x35
 	cjne	a,_car,00106$
 	mov	r6,#0x31
@@ -725,25 +725,25 @@ _main:
 	mov	_car,r6
 	sjmp	00101$
 00103$:
-;	testparking.c:103: ThreadExit();
-;	testparking.c:104: }
+;	testparking.c:105: ThreadExit();
+;	testparking.c:106: }
 	ljmp	_ThreadExit
 ;------------------------------------------------------------
 ;Allocation info for local variables in function '_sdcc_gsinit_startup'
 ;------------------------------------------------------------
-;	testparking.c:106: void _sdcc_gsinit_startup(void) {
+;	testparking.c:108: void _sdcc_gsinit_startup(void) {
 ;	-----------------------------------------
 ;	 function _sdcc_gsinit_startup
 ;	-----------------------------------------
 __sdcc_gsinit_startup:
-;	testparking.c:109: __endasm;
+;	testparking.c:111: __endasm;
 	ljmp	_Bootstrap
-;	testparking.c:110: }
+;	testparking.c:112: }
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function '_mcs51_genRAMCLEAR'
 ;------------------------------------------------------------
-;	testparking.c:112: void _mcs51_genRAMCLEAR(void) {}
+;	testparking.c:114: void _mcs51_genRAMCLEAR(void) {}
 ;	-----------------------------------------
 ;	 function _mcs51_genRAMCLEAR
 ;	-----------------------------------------
@@ -752,7 +752,7 @@ __mcs51_genRAMCLEAR:
 ;------------------------------------------------------------
 ;Allocation info for local variables in function '_mcs51_genXINIT'
 ;------------------------------------------------------------
-;	testparking.c:113: void _mcs51_genXINIT(void) {}
+;	testparking.c:115: void _mcs51_genXINIT(void) {}
 ;	-----------------------------------------
 ;	 function _mcs51_genXINIT
 ;	-----------------------------------------
@@ -761,7 +761,7 @@ __mcs51_genXINIT:
 ;------------------------------------------------------------
 ;Allocation info for local variables in function '_mcs51_genXRAMCLEAR'
 ;------------------------------------------------------------
-;	testparking.c:114: void _mcs51_genXRAMCLEAR(void) {}
+;	testparking.c:116: void _mcs51_genXRAMCLEAR(void) {}
 ;	-----------------------------------------
 ;	 function _mcs51_genXRAMCLEAR
 ;	-----------------------------------------
@@ -770,14 +770,14 @@ __mcs51_genXRAMCLEAR:
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'timer0_ISR'
 ;------------------------------------------------------------
-;	testparking.c:115: void timer0_ISR(void) __interrupt(1) {
+;	testparking.c:117: void timer0_ISR(void) __interrupt(1) {
 ;	-----------------------------------------
 ;	 function timer0_ISR
 ;	-----------------------------------------
 _timer0_ISR:
-;	testparking.c:118: __endasm;
+;	testparking.c:120: __endasm;
 	ljmp	_myTimer0Handler
-;	testparking.c:119: }
+;	testparking.c:121: }
 	reti
 ;	eliminated unneeded mov psw,# (no regs used in bank)
 ;	eliminated unneeded push/pop not_psw

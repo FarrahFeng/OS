@@ -14,7 +14,7 @@
  * to declare a variable var of the type
  */
 __data __at(0x3A) char buffer;
-__data __at(0x3B) char Token;
+__data __at(0x3B) char tok;
 __data __at(0x3C) char buffer_full;
 
 /* [8 pts] for this function
@@ -29,7 +29,7 @@ void Producer(void)
          * initialize producer data structure, and then enter
          * an infinite loop (does not return)
          */
-        Token = 'A';
+        tok = 'A';
         while (1)
         {
                 /* @@@ [6 pt]
@@ -39,9 +39,9 @@ void Producer(void)
                 {
                         ThreadYield();
                 }
-                buffer = Token;
+                buffer = tok;
                 buffer_full = 1;
-                Token = (Token == 'Z') ? 'A' : Token + 1;
+                tok = (tok == 'Z') ? 'A' : tok + 1;
         }
 }
 

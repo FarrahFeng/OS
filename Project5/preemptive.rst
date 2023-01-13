@@ -306,7 +306,7 @@
                                     306 ;------------------------------------------------------------
                                     307 ;Allocation info for local variables in function 'now'
                                     308 ;------------------------------------------------------------
-                                    309 ;	preemptive.c:59: unsigned char now(void){
+                                    309 ;	preemptive.c:70: unsigned char now(void){
                                     310 ;	-----------------------------------------
                                     311 ;	 function now
                                     312 ;	-----------------------------------------
@@ -319,32 +319,32 @@
                            000002   319 	ar2 = 0x02
                            000001   320 	ar1 = 0x01
                            000000   321 	ar0 = 0x00
-                                    322 ;	preemptive.c:60: return time;
+                                    322 ;	preemptive.c:71: return time;
       000258 85 39 82         [24]  323 	mov	dpl,_time
-                                    324 ;	preemptive.c:61: }
+                                    324 ;	preemptive.c:72: }
       00025B 22               [24]  325 	ret
                                     326 ;------------------------------------------------------------
                                     327 ;Allocation info for local variables in function 'Bootstrap'
                                     328 ;------------------------------------------------------------
-                                    329 ;	preemptive.c:63: void Bootstrap(void) {
+                                    329 ;	preemptive.c:74: void Bootstrap(void) {
                                     330 ;	-----------------------------------------
                                     331 ;	 function Bootstrap
                                     332 ;	-----------------------------------------
       00025C                        333 _Bootstrap:
-                                    334 ;	preemptive.c:64: mask = 0;
+                                    334 ;	preemptive.c:75: mask = 0;
       00025C 75 34 00         [24]  335 	mov	_mask,#0x00
-                                    336 ;	preemptive.c:65: TMOD = 0;  // timer 0 mode 0
+                                    336 ;	preemptive.c:76: TMOD = 0;  // timer 0 mode 0 (timer 1 is already used by UART)
       00025F 75 89 00         [24]  337 	mov	_TMOD,#0x00
-                                    338 ;	preemptive.c:66: IE = 0x82;  // enable timer 0 interrupt; keep consumer polling
+                                    338 ;	preemptive.c:77: IE = 0x82;  // enable timer 0 interrupt; keep consumer polling
       000262 75 A8 82         [24]  339 	mov	_IE,#0x82
-                                    340 ;	preemptive.c:68: TR0 = 1; // set bit TR0 to start running timer 0
+                                    340 ;	preemptive.c:79: TR0 = 1; // set bit TR0 to start running timer 0
                                     341 ;	assignBit
       000265 D2 8C            [12]  342 	setb	_TR0
-                                    343 ;	preemptive.c:69: cur_thread = ThreadCreate( main );
+                                    343 ;	preemptive.c:80: cur_thread = ThreadCreate( main );
       000267 90 01 BF         [24]  344 	mov	dptr,#_main
       00026A 12 03 32         [24]  345 	lcall	_ThreadCreate
       00026D 85 82 35         [24]  346 	mov	_cur_thread,dpl
-                                    347 ;	preemptive.c:70: RESTORESTATE;
+                                    347 ;	preemptive.c:81: RESTORESTATE;
       000270 E5 35            [12]  348 	mov	a,_cur_thread
       000272 24 30            [12]  349 	add	a,#_saved_sp
       000274 F9               [12]  350 	mov	r1,a
@@ -354,20 +354,20 @@
       00027B D0 82            [24]  354 	POP DPL 
       00027D D0 F0            [24]  355 	POP B 
       00027F D0 E0            [24]  356 	POP ACC 
-                                    357 ;	preemptive.c:72: }
+                                    357 ;	preemptive.c:83: }
       000281 22               [24]  358 	ret
                                     359 ;------------------------------------------------------------
                                     360 ;Allocation info for local variables in function 'myTimer0Handler'
                                     361 ;------------------------------------------------------------
-                                    362 ;	preemptive.c:73: void myTimer0Handler(){
+                                    362 ;	preemptive.c:85: void myTimer0Handler(){
                                     363 ;	-----------------------------------------
                                     364 ;	 function myTimer0Handler
                                     365 ;	-----------------------------------------
       000282                        366 _myTimer0Handler:
-                                    367 ;	preemptive.c:74: EA = 0;
+                                    367 ;	preemptive.c:86: EA = 0;
                                     368 ;	assignBit
       000282 C2 AF            [12]  369 	clr	_EA
-                                    370 ;	preemptive.c:75: SAVESTATE;
+                                    370 ;	preemptive.c:87: SAVESTATE;
       000284 C0 E0            [24]  371 	PUSH ACC 
       000286 C0 F0            [24]  372 	PUSH B 
       000288 C0 82            [24]  373 	PUSH DPL 
@@ -377,7 +377,7 @@
       000290 24 30            [12]  377 	add	a,#_saved_sp
       000292 F8               [12]  378 	mov	r0,a
       000293 A6 81            [24]  379 	mov	@r0,_SP
-                                    380 ;	preemptive.c:93: __endasm;
+                                    380 ;	preemptive.c:106: __endasm;
       000295 E8               [12]  381 	MOV	A, R0
       000296 C0 E0            [24]  382 	PUSH	ACC
       000298 E9               [12]  383 	MOV	A, R1
@@ -394,12 +394,12 @@
       0002A8 C0 E0            [24]  394 	PUSH	ACC
       0002AA EF               [12]  395 	MOV	A, R7
       0002AB C0 E0            [24]  396 	PUSH	ACC
-                                    397 ;	preemptive.c:94: time_sec = time_sec + 1;
+                                    397 ;	preemptive.c:107: time_sec = time_sec + 1;
       0002AD E5 24            [12]  398 	mov	a,_time_sec
       0002AF FF               [12]  399 	mov	r7,a
       0002B0 04               [12]  400 	inc	a
       0002B1 F5 24            [12]  401 	mov	_time_sec,a
-                                    402 ;	preemptive.c:95: if(time_sec==8){ time = time + 1; time_sec = 0;}
+                                    402 ;	preemptive.c:108: if(time_sec==8){ time = time + 1; time_sec = 0;}
       0002B3 74 08            [12]  403 	mov	a,#0x08
       0002B5 B5 24 09         [24]  404 	cjne	a,_time_sec,00122$
       0002B8 E5 39            [12]  405 	mov	a,_time
@@ -407,9 +407,9 @@
       0002BB 04               [12]  407 	inc	a
       0002BC F5 39            [12]  408 	mov	_time,a
       0002BE 75 24 00         [24]  409 	mov	_time_sec,#0x00
-                                    410 ;	preemptive.c:97: do{
+                                    410 ;	preemptive.c:110: do{
       0002C1                        411 00122$:
-                                    412 ;	preemptive.c:98: cur_thread = (cur_thread < 3 ) ?  cur_thread+1 : 0;
+                                    412 ;	preemptive.c:111: cur_thread = (cur_thread < 3 ) ?  cur_thread+1 : 0;
       0002C1 74 FD            [12]  413 	mov	a,#0x100 - 0x03
       0002C3 25 35            [12]  414 	add	a,_cur_thread
       0002C5 40 0B            [24]  415 	jc	00127$
@@ -426,35 +426,35 @@
       0002D4 7F 00            [12]  426 	mov	r7,#0x00
       0002D6                        427 00128$:
       0002D6 8E 35            [24]  428 	mov	_cur_thread,r6
-                                    429 ;	preemptive.c:99: if( cur_thread == 0 ){if( mask&1 ){break;}}
+                                    429 ;	preemptive.c:112: if( cur_thread == 0 ){if( mask&1 ){break;}}
       0002D8 E5 35            [12]  430 	mov	a,_cur_thread
       0002DA 70 07            [24]  431 	jnz	00120$
       0002DC E5 34            [12]  432 	mov	a,_mask
       0002DE 30 E0 E0         [24]  433 	jnb	acc.0,00122$
       0002E1 80 22            [24]  434 	sjmp	00124$
       0002E3                        435 00120$:
-                                    436 ;	preemptive.c:100: else if( cur_thread == 1 ){if( mask&2 ){break;}}
+                                    436 ;	preemptive.c:113: else if( cur_thread == 1 ){if( mask&2 ){break;}}
       0002E3 74 01            [12]  437 	mov	a,#0x01
       0002E5 B5 35 07         [24]  438 	cjne	a,_cur_thread,00117$
       0002E8 E5 34            [12]  439 	mov	a,_mask
       0002EA 30 E1 D4         [24]  440 	jnb	acc.1,00122$
       0002ED 80 16            [24]  441 	sjmp	00124$
       0002EF                        442 00117$:
-                                    443 ;	preemptive.c:101: else if( cur_thread == 2 ){if( mask&4 ){break;}}
+                                    443 ;	preemptive.c:114: else if( cur_thread == 2 ){if( mask&4 ){break;}}
       0002EF 74 02            [12]  444 	mov	a,#0x02
       0002F1 B5 35 07         [24]  445 	cjne	a,_cur_thread,00114$
       0002F4 E5 34            [12]  446 	mov	a,_mask
       0002F6 30 E2 C8         [24]  447 	jnb	acc.2,00122$
       0002F9 80 0A            [24]  448 	sjmp	00124$
       0002FB                        449 00114$:
-                                    450 ;	preemptive.c:102: else if( cur_thread == 3 ){if( mask&8 ){break;}}   
+                                    450 ;	preemptive.c:115: else if( cur_thread == 3 ){if( mask&8 ){break;}}   
       0002FB 74 03            [12]  451 	mov	a,#0x03
       0002FD B5 35 C1         [24]  452 	cjne	a,_cur_thread,00122$
       000300 E5 34            [12]  453 	mov	a,_mask
       000302 30 E3 BC         [24]  454 	jnb	acc.3,00122$
-                                    455 ;	preemptive.c:103: } while (1);
+                                    455 ;	preemptive.c:116: } while (1);
       000305                        456 00124$:
-                                    457 ;	preemptive.c:121: __endasm;  
+                                    457 ;	preemptive.c:143: __endasm;  
       000305 D0 E0            [24]  458 	POP	ACC
       000307 FF               [12]  459 	MOV	R7, A
       000308 D0 E0            [24]  460 	POP	ACC
@@ -471,7 +471,7 @@
       000319 F9               [12]  471 	MOV	R1, A
       00031A D0 E0            [24]  472 	POP	ACC
       00031C F8               [12]  473 	MOV	R0, A
-                                    474 ;	preemptive.c:122: RESTORESTATE;
+                                    474 ;	preemptive.c:144: RESTORESTATE;
       00031D E5 35            [12]  475 	mov	a,_cur_thread
       00031F 24 30            [12]  476 	add	a,#_saved_sp
       000321 F9               [12]  477 	mov	r1,a
@@ -481,123 +481,123 @@
       000328 D0 82            [24]  481 	POP DPL 
       00032A D0 F0            [24]  482 	POP B 
       00032C D0 E0            [24]  483 	POP ACC 
-                                    484 ;	preemptive.c:123: EA = 1;
+                                    484 ;	preemptive.c:145: EA = 1;                  // enable interrupts
                                     485 ;	assignBit
       00032E D2 AF            [12]  486 	setb	_EA
-                                    487 ;	preemptive.c:126: __endasm;
+                                    487 ;	preemptive.c:148: __endasm;
       000330 32               [24]  488 	RETI
-                                    489 ;	preemptive.c:128: }
+                                    489 ;	preemptive.c:150: }
       000331 22               [24]  490 	ret
                                     491 ;------------------------------------------------------------
                                     492 ;Allocation info for local variables in function 'ThreadCreate'
                                     493 ;------------------------------------------------------------
                                     494 ;fp                        Allocated to registers 
                                     495 ;------------------------------------------------------------
-                                    496 ;	preemptive.c:136: ThreadID ThreadCreate(FunctionPtr fp) {
+                                    496 ;	preemptive.c:158: ThreadID ThreadCreate(FunctionPtr fp) {
                                     497 ;	-----------------------------------------
                                     498 ;	 function ThreadCreate
                                     499 ;	-----------------------------------------
       000332                        500 _ThreadCreate:
-                                    501 ;	preemptive.c:137: EA = 0;
+                                    501 ;	preemptive.c:159: EA = 0;
                                     502 ;	assignBit
       000332 C2 AF            [12]  503 	clr	_EA
-                                    504 ;	preemptive.c:139: if( mask == 15 ) //mask = 0b1111, four thread
+                                    504 ;	preemptive.c:161: if( mask == 15 )   // mask = 0b1111, max threads = four 
       000334 74 0F            [12]  505 	mov	a,#0x0f
       000336 B5 34 04         [24]  506 	cjne	a,_mask,00102$
-                                    507 ;	preemptive.c:140: return -1;
+                                    507 ;	preemptive.c:162: return -1;      // invalid thread ID
       000339 75 82 FF         [24]  508 	mov	dpl,#0xff
       00033C 22               [24]  509 	ret
       00033D                        510 00102$:
-                                    511 ;	preemptive.c:143: if( !( mask & 1 ) ){
+                                    511 ;	preemptive.c:165: if( !( mask & 1 ) ){
       00033D E5 34            [12]  512 	mov	a,_mask
       00033F 20 E0 08         [24]  513 	jb	acc.0,00112$
-                                    514 ;	preemptive.c:144: mask = mask | 1;
+                                    514 ;	preemptive.c:166: mask = mask | 1;
       000342 43 34 01         [24]  515 	orl	_mask,#0x01
-                                    516 ;	preemptive.c:145: new_thread = 0;
+                                    516 ;	preemptive.c:167: new_thread = 0;
       000345 75 37 00         [24]  517 	mov	_new_thread,#0x00
       000348 80 25            [24]  518 	sjmp	00113$
       00034A                        519 00112$:
-                                    520 ;	preemptive.c:146: }else if( !( mask & 2 ) ){
+                                    520 ;	preemptive.c:168: }else if( !( mask & 2 ) ){
       00034A E5 34            [12]  521 	mov	a,_mask
       00034C 20 E1 08         [24]  522 	jb	acc.1,00109$
-                                    523 ;	preemptive.c:147: mask = mask | 2;
+                                    523 ;	preemptive.c:169: mask = mask | 2;
       00034F 43 34 02         [24]  524 	orl	_mask,#0x02
-                                    525 ;	preemptive.c:148: new_thread = 1;
+                                    525 ;	preemptive.c:170: new_thread = 1;
       000352 75 37 01         [24]  526 	mov	_new_thread,#0x01
       000355 80 18            [24]  527 	sjmp	00113$
       000357                        528 00109$:
-                                    529 ;	preemptive.c:149: }else if( !( mask & 4 ) ){
+                                    529 ;	preemptive.c:171: }else if( !( mask & 4 ) ){
       000357 E5 34            [12]  530 	mov	a,_mask
       000359 20 E2 08         [24]  531 	jb	acc.2,00106$
-                                    532 ;	preemptive.c:150: mask = mask | 4;
+                                    532 ;	preemptive.c:172: mask = mask | 4;
       00035C 43 34 04         [24]  533 	orl	_mask,#0x04
-                                    534 ;	preemptive.c:151: new_thread = 2;
+                                    534 ;	preemptive.c:173: new_thread = 2;
       00035F 75 37 02         [24]  535 	mov	_new_thread,#0x02
       000362 80 0B            [24]  536 	sjmp	00113$
       000364                        537 00106$:
-                                    538 ;	preemptive.c:152: }else if( !( mask & 8 ) ){
+                                    538 ;	preemptive.c:174: }else if( !( mask & 8 ) ){
       000364 E5 34            [12]  539 	mov	a,_mask
       000366 20 E3 06         [24]  540 	jb	acc.3,00113$
-                                    541 ;	preemptive.c:153: mask = mask | 8;
+                                    541 ;	preemptive.c:175: mask = mask | 8;
       000369 43 34 08         [24]  542 	orl	_mask,#0x08
-                                    543 ;	preemptive.c:154: new_thread = 3;
+                                    543 ;	preemptive.c:176: new_thread = 3;
       00036C 75 37 03         [24]  544 	mov	_new_thread,#0x03
       00036F                        545 00113$:
-                                    546 ;	preemptive.c:157: sp_temp = SP;
+                                    546 ;	preemptive.c:179: sp_temp = SP;
       00036F 85 81 36         [24]  547 	mov	_sp_temp,_SP
-                                    548 ;	preemptive.c:158: SP = (0x3F) + (0x10) * new_thread;
+                                    548 ;	preemptive.c:180: SP = (0x3F) + (0x10) * new_thread; // set to the starting location for new thread
       000372 E5 37            [12]  549 	mov	a,_new_thread
       000374 C4               [12]  550 	swap	a
       000375 54 F0            [12]  551 	anl	a,#0xf0
       000377 FF               [12]  552 	mov	r7,a
       000378 24 3F            [12]  553 	add	a,#0x3f
       00037A F5 81            [12]  554 	mov	_SP,a
-                                    555 ;	preemptive.c:165: __endasm;
+                                    555 ;	preemptive.c:187: __endasm;
       00037C C0 82            [24]  556 	PUSH	DPL
       00037E C0 83            [24]  557 	PUSH	DPH
-                                    558 ;	preemptive.c:177: __endasm;
+                                    558 ;	preemptive.c:199: __endasm;
       000380 54 00            [12]  559 	ANL	A, #0
       000382 C0 E0            [24]  560 	PUSH	ACC
       000384 C0 E0            [24]  561 	PUSH	ACC
       000386 C0 E0            [24]  562 	PUSH	ACC
       000388 C0 E0            [24]  563 	PUSH	ACC
-                                    564 ;	preemptive.c:181: PSW = new_thread << 3;
+                                    564 ;	preemptive.c:207: PSW = new_thread << 3;
       00038A E5 37            [12]  565 	mov	a,_new_thread
       00038C FF               [12]  566 	mov	r7,a
       00038D C4               [12]  567 	swap	a
       00038E 03               [12]  568 	rr	a
       00038F 54 F8            [12]  569 	anl	a,#0xf8
       000391 F5 D0            [12]  570 	mov	_PSW,a
-                                    571 ;	preemptive.c:184: __endasm;
+                                    571 ;	preemptive.c:210: __endasm;
       000393 C0 D0            [24]  572 	PUSH	PSW
-                                    573 ;	preemptive.c:187: saved_sp[new_thread] = SP;
+                                    573 ;	preemptive.c:213: saved_sp[new_thread] = SP;
       000395 E5 37            [12]  574 	mov	a,_new_thread
       000397 24 30            [12]  575 	add	a,#_saved_sp
       000399 F8               [12]  576 	mov	r0,a
       00039A A6 81            [24]  577 	mov	@r0,_SP
-                                    578 ;	preemptive.c:189: SP = sp_temp;
+                                    578 ;	preemptive.c:215: SP = sp_temp;
       00039C 85 36 81         [24]  579 	mov	_SP,_sp_temp
-                                    580 ;	preemptive.c:191: EA = 1;
+                                    580 ;	preemptive.c:217: EA = 1;
                                     581 ;	assignBit
       00039F D2 AF            [12]  582 	setb	_EA
-                                    583 ;	preemptive.c:192: return new_thread;
+                                    583 ;	preemptive.c:218: return new_thread;
       0003A1 85 37 82         [24]  584 	mov	dpl,_new_thread
-                                    585 ;	preemptive.c:195: }
+                                    585 ;	preemptive.c:221: }
       0003A4 22               [24]  586 	ret
                                     587 ;------------------------------------------------------------
                                     588 ;Allocation info for local variables in function 'ThreadYield'
                                     589 ;------------------------------------------------------------
-                                    590 ;	preemptive.c:206: void ThreadYield(void) {
+                                    590 ;	preemptive.c:232: void ThreadYield(void) {
                                     591 ;	-----------------------------------------
                                     592 ;	 function ThreadYield
                                     593 ;	-----------------------------------------
       0003A5                        594 _ThreadYield:
-                                    595 ;	preemptive.c:216: }
+                                    595 ;	preemptive.c:242: }
       0003A5 D2 00            [12]  596 	setb	_ThreadYield_sloc0_1_0
       0003A7 10 AF 02         [24]  597 	jbc	ea,00122$
       0003AA C2 00            [12]  598 	clr	_ThreadYield_sloc0_1_0
       0003AC                        599 00122$:
-                                    600 ;	preemptive.c:208: SAVESTATE;
+                                    600 ;	preemptive.c:234: SAVESTATE;
       0003AC C0 E0            [24]  601 	PUSH ACC 
       0003AE C0 F0            [24]  602 	PUSH B 
       0003B0 C0 82            [24]  603 	PUSH DPL 
@@ -607,9 +607,9 @@
       0003B8 24 30            [12]  607 	add	a,#_saved_sp
       0003BA F8               [12]  608 	mov	r0,a
       0003BB A6 81            [24]  609 	mov	@r0,_SP
-                                    610 ;	preemptive.c:209: do{
+                                    610 ;	preemptive.c:235: do{
       0003BD                        611 00103$:
-                                    612 ;	preemptive.c:210: cur_thread = (cur_thread < 3 ) ?  cur_thread+1 : 0;
+                                    612 ;	preemptive.c:236: cur_thread = (cur_thread < 3 ) ?  cur_thread+1 : 0;
       0003BD 74 FD            [12]  613 	mov	a,#0x100 - 0x03
       0003BF 25 35            [12]  614 	add	a,_cur_thread
       0003C1 40 0B            [24]  615 	jc	00108$
@@ -626,7 +626,7 @@
       0003D0 7F 00            [12]  626 	mov	r7,#0x00
       0003D2                        627 00109$:
       0003D2 8E 35            [24]  628 	mov	_cur_thread,r6
-                                    629 ;	preemptive.c:211: if( mask & (1<<cur_thread) ){
+                                    629 ;	preemptive.c:237: if( mask & (1<<cur_thread) ){
       0003D4 AF 35            [24]  630 	mov	r7,_cur_thread
       0003D6 8F F0            [24]  631 	mov	b,r7
       0003D8 05 F0            [12]  632 	inc	b
@@ -651,7 +651,7 @@
       0003F3 EF               [12]  651 	mov	a,r7
       0003F4 4E               [12]  652 	orl	a,r6
       0003F5 60 C6            [24]  653 	jz	00103$
-                                    654 ;	preemptive.c:215: RESTORESTATE;
+                                    654 ;	preemptive.c:241: RESTORESTATE;
       0003F7 E5 35            [12]  655 	mov	a,_cur_thread
       0003F9 24 30            [12]  656 	add	a,#_saved_sp
       0003FB F9               [12]  657 	mov	r1,a
@@ -663,20 +663,20 @@
       000406 D0 E0            [24]  663 	POP ACC 
       000408 A2 00            [12]  664 	mov	c,_ThreadYield_sloc0_1_0
       00040A 92 AF            [24]  665 	mov	ea,c
-                                    666 ;	preemptive.c:217: }
+                                    666 ;	preemptive.c:243: }
       00040C 22               [24]  667 	ret
                                     668 ;------------------------------------------------------------
                                     669 ;Allocation info for local variables in function 'ThreadExit'
                                     670 ;------------------------------------------------------------
-                                    671 ;	preemptive.c:225: void ThreadExit(void) {
+                                    671 ;	preemptive.c:251: void ThreadExit(void) {
                                     672 ;	-----------------------------------------
                                     673 ;	 function ThreadExit
                                     674 ;	-----------------------------------------
       00040D                        675 _ThreadExit:
-                                    676 ;	preemptive.c:226: EA = 0;
+                                    676 ;	preemptive.c:252: EA = 0;
                                     677 ;	assignBit
       00040D C2 AF            [12]  678 	clr	_EA
-                                    679 ;	preemptive.c:227: if(cur_thread == 0) mask = mask - 1;
+                                    679 ;	preemptive.c:257: if(cur_thread == 0) mask = mask - 1;
       00040F E5 35            [12]  680 	mov	a,_cur_thread
       000411 70 08            [24]  681 	jnz	00110$
       000413 E5 34            [12]  682 	mov	a,_mask
@@ -685,7 +685,7 @@
       000417 F5 34            [12]  685 	mov	_mask,a
       000419 80 28            [24]  686 	sjmp	00111$
       00041B                        687 00110$:
-                                    688 ;	preemptive.c:228: else if( cur_thread == 1 )mask = mask - 2;
+                                    688 ;	preemptive.c:258: else if( cur_thread == 1 )mask = mask - 2;
       00041B 74 01            [12]  689 	mov	a,#0x01
       00041D B5 35 09         [24]  690 	cjne	a,_cur_thread,00107$
       000420 E5 34            [12]  691 	mov	a,_mask
@@ -694,7 +694,7 @@
       000425 F5 34            [12]  694 	mov	_mask,a
       000427 80 1A            [24]  695 	sjmp	00111$
       000429                        696 00107$:
-                                    697 ;	preemptive.c:229: else if( cur_thread == 2 )mask = mask - 4;
+                                    697 ;	preemptive.c:259: else if( cur_thread == 2 )mask = mask - 4;
       000429 74 02            [12]  698 	mov	a,#0x02
       00042B B5 35 09         [24]  699 	cjne	a,_cur_thread,00104$
       00042E E5 34            [12]  700 	mov	a,_mask
@@ -703,7 +703,7 @@
       000433 F5 34            [12]  703 	mov	_mask,a
       000435 80 0C            [24]  704 	sjmp	00111$
       000437                        705 00104$:
-                                    706 ;	preemptive.c:230: else if( cur_thread == 3 )mask = mask - 8;
+                                    706 ;	preemptive.c:260: else if( cur_thread == 3 )mask = mask - 8;
       000437 74 03            [12]  707 	mov	a,#0x03
       000439 B5 35 07         [24]  708 	cjne	a,_cur_thread,00111$
       00043C E5 34            [12]  709 	mov	a,_mask
@@ -711,38 +711,38 @@
       00043F 24 F8            [12]  711 	add	a,#0xf8
       000441 F5 34            [12]  712 	mov	_mask,a
       000443                        713 00111$:
-                                    714 ;	preemptive.c:232: if(  mask & 1  ){
+                                    714 ;	preemptive.c:262: if(  mask & 1  ){
       000443 E5 34            [12]  715 	mov	a,_mask
       000445 30 E0 05         [24]  716 	jnb	acc.0,00125$
-                                    717 ;	preemptive.c:233: cur_thread = 0;
+                                    717 ;	preemptive.c:263: cur_thread = 0;
       000448 75 35 00         [24]  718 	mov	_cur_thread,#0x00
       00044B 80 20            [24]  719 	sjmp	00126$
       00044D                        720 00125$:
-                                    721 ;	preemptive.c:234: }else if(  mask & 2  ){
+                                    721 ;	preemptive.c:264: }else if(  mask & 2  ){
       00044D E5 34            [12]  722 	mov	a,_mask
       00044F 30 E1 05         [24]  723 	jnb	acc.1,00122$
-                                    724 ;	preemptive.c:235: cur_thread = 1;
+                                    724 ;	preemptive.c:265: cur_thread = 1;
       000452 75 35 01         [24]  725 	mov	_cur_thread,#0x01
       000455 80 16            [24]  726 	sjmp	00126$
       000457                        727 00122$:
-                                    728 ;	preemptive.c:236: }else if(  mask & 4  ){
+                                    728 ;	preemptive.c:266: }else if(  mask & 4  ){
       000457 E5 34            [12]  729 	mov	a,_mask
       000459 30 E2 05         [24]  730 	jnb	acc.2,00119$
-                                    731 ;	preemptive.c:237: cur_thread = 2;
+                                    731 ;	preemptive.c:267: cur_thread = 2;
       00045C 75 35 02         [24]  732 	mov	_cur_thread,#0x02
       00045F 80 0C            [24]  733 	sjmp	00126$
       000461                        734 00119$:
-                                    735 ;	preemptive.c:238: }else if(  mask & 8  ){
+                                    735 ;	preemptive.c:268: }else if(  mask & 8  ){
       000461 E5 34            [12]  736 	mov	a,_mask
       000463 30 E3 05         [24]  737 	jnb	acc.3,00113$
-                                    738 ;	preemptive.c:239: cur_thread = 3;
+                                    738 ;	preemptive.c:269: cur_thread = 3;
       000466 75 35 03         [24]  739 	mov	_cur_thread,#0x03
-                                    740 ;	preemptive.c:242: while(1){}
+                                    740 ;	preemptive.c:272: while(1){}
       000469 80 02            [24]  741 	sjmp	00126$
       00046B                        742 00113$:
       00046B 80 FE            [24]  743 	sjmp	00113$
       00046D                        744 00126$:
-                                    745 ;	preemptive.c:245: RESTORESTATE;
+                                    745 ;	preemptive.c:275: RESTORESTATE;
       00046D E5 35            [12]  746 	mov	a,_cur_thread
       00046F 24 30            [12]  747 	add	a,#_saved_sp
       000471 F9               [12]  748 	mov	r1,a
@@ -752,10 +752,10 @@
       000478 D0 82            [24]  752 	POP DPL 
       00047A D0 F0            [24]  753 	POP B 
       00047C D0 E0            [24]  754 	POP ACC 
-                                    755 ;	preemptive.c:246: EA = 1;
+                                    755 ;	preemptive.c:276: EA = 1;
                                     756 ;	assignBit
       00047E D2 AF            [12]  757 	setb	_EA
-                                    758 ;	preemptive.c:247: }
+                                    758 ;	preemptive.c:277: }
       000480 22               [24]  759 	ret
                                     760 	.area CSEG    (CODE)
                                     761 	.area CONST   (CODE)

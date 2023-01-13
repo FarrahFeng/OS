@@ -106,11 +106,11 @@ Area                                    Addr        Size        Decimal Bytes (A
      00000037  _new_thread                        preemptive
      00000039  _time                              preemptive
      0000003A  _next_car                          testparking
-     0000003B  _Token                             testparking
+     0000003B  _tok                               testparking
      0000003C  _car                               testparking
      0000003D  _mutex                             testparking
      0000003E  _empty                             testparking
-     0000003F  _Token2                            testparking
+     0000003F  _tok2                              testparking
      00000080  _P0                                preemptive
      00000080  _P0_0                              preemptive
      00000081  _P0_1                              preemptive

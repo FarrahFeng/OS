@@ -1,23 +1,24 @@
-
 #include <8051.h>
 #include "preemptive.h"
 
 __data __at (0x3A) char next_car;
-__data __at (0x3B) char Token;
+__data __at (0x3B) char tok;
 __data __at (0x3C) char car;
-__data __at (0x3D) char mutex;
-__data __at (0x3E) char empty;
-__data __at (0x3F) char Token2;
+__data __at (0x3D) char mutex;      // mutual exclusive access
+__data __at (0x3E) char empty;      // empty buffers
+__data __at (0x3F) char tok2;
 __data __at (0x2A) char id;
 __data __at (0x2B) char car_name[4]; //B~E
 __data __at (0x2F) char car_id;
 
 
-
+// ##: concatenate two symbols
 #define L(x) LABEL(x)
 #define LABEL(x) x##$
 
-
+// SBUF(serial buffer): contains character buffer
+// TI == 1 when ready for next byte
+// RI == 1 when byte has been received (read char from SBUF)
 #define print(a, b)\
     TMOD |= 0x20;\
     TH1 = -6;\
@@ -35,18 +36,19 @@ __data __at (0x2F) char car_id;
 
 
 void Producer(void) {
-        /* @@@ [6 pt]
-            * wait for the buffer to be available, 
-    * and then write the new data into the buffer */
-   
+        /* 
+        * wait for the buffer to be available, 
+        * and then write the new data into the buffer 
+        * __COUNTER__ : C preprocessor's (generate new integer literal)
+        */
         SemaphoreWaitBody(empty, L(__COUNTER__) );
         SemaphoreWaitBody(mutex, L(__COUNTER__) );
         EA = 0;
-        if( Token == '0' ){ 
-            Token = car_name[cur_thread];
+        if( tok == '0' ){ 
+            tok = car_name[cur_thread];
             print(car_name[cur_thread],'i');
-        }else if( Token2 == '0' ){
-            Token2 = car_name[cur_thread];
+        }else if( tok2 == '0' ){
+            tok2 = car_name[cur_thread];
             print(car_name[cur_thread],'i');
         }
         EA = 1;
@@ -55,11 +57,11 @@ void Producer(void) {
         delay(2);
         
         EA = 0;
-        if( Token == car_name[cur_thread] ){
-            Token = '0';
+        if( tok == car_name[cur_thread] ){
+            tok = '0';
             print(car_name[cur_thread], 'o');
-        }else if( Token2 == car_name[cur_thread] ){ 
-            Token2 = '0';
+        }else if( tok2 == car_name[cur_thread] ){ 
+            tok2 = '0';
             print(car_name[cur_thread], 'o');
         }
         EA = 1;
@@ -76,8 +78,8 @@ void main(void) {
 
         EA = 1;
 
-        Token = '0';
-        Token2 = '0';
+        tok = '0';
+        tok2 = '0';
         car = '1';
         
         car_id = ThreadCreate( Producer );
@@ -94,7 +96,7 @@ void main(void) {
         while(time < 0x1f){
             SemaphoreWaitBody(next_car, L(__COUNTER__) );
             car_id = ThreadCreate( Producer );
-            // if( car == Token2 || car == Token ){
+            // if( car == tok2 || car == tok ){
             //     car = (car == '5') ? '1' : car+1;
             // }
             car_name[ car_id  ] = car;

@@ -116,11 +116,11 @@
                                     116 	.globl _car_id
                                     117 	.globl _car_name
                                     118 	.globl _id
-                                    119 	.globl _Token2
+                                    119 	.globl _tok2
                                     120 	.globl _empty
                                     121 	.globl _mutex
                                     122 	.globl _car
-                                    123 	.globl _Token
+                                    123 	.globl _tok
                                     124 	.globl _next_car
                                     125 	.globl _time_temp
                                     126 	.globl _time_sec
@@ -246,11 +246,11 @@
                            000024   246 _time_sec	=	0x0024
                            000020   247 _time_temp	=	0x0020
                            00003A   248 _next_car	=	0x003a
-                           00003B   249 _Token	=	0x003b
+                           00003B   249 _tok	=	0x003b
                            00003C   250 _car	=	0x003c
                            00003D   251 _mutex	=	0x003d
                            00003E   252 _empty	=	0x003e
-                           00003F   253 _Token2	=	0x003f
+                           00003F   253 _tok2	=	0x003f
                            00002A   254 _id	=	0x002a
                            00002B   255 _car_name	=	0x002b
                            00002F   256 _car_id	=	0x002f
@@ -342,7 +342,7 @@
                                     342 ;------------------------------------------------------------
                                     343 ;Allocation info for local variables in function 'Producer'
                                     344 ;------------------------------------------------------------
-                                    345 ;	testparking.c:37: void Producer(void) {
+                                    345 ;	testparking.c:38: void Producer(void) {
                                     346 ;	-----------------------------------------
                                     347 ;	 function Producer
                                     348 ;	-----------------------------------------
@@ -355,30 +355,30 @@
                            000002   355 	ar2 = 0x02
                            000001   356 	ar1 = 0x01
                            000000   357 	ar0 = 0x00
-                                    358 ;	testparking.c:42: SemaphoreWaitBody(empty, L(__COUNTER__) );
+                                    358 ;	testparking.c:44: SemaphoreWaitBody(empty, L(__COUNTER__) );
       000014                        359 		0$:
       000014 E5 3E            [12]  360 	MOV A, _empty 
       000016 60 FC            [24]  361 	JZ 0$ 
       000018 20 E7 F9         [24]  362 	JB ACC.7, 0$ 
       00001B 15 3E            [12]  363 	dec _empty 
-                                    364 ;	testparking.c:43: SemaphoreWaitBody(mutex, L(__COUNTER__) );
+                                    364 ;	testparking.c:45: SemaphoreWaitBody(mutex, L(__COUNTER__) );
       00001D                        365 		1$:
       00001D E5 3D            [12]  366 	MOV A, _mutex 
       00001F 60 FC            [24]  367 	JZ 1$ 
       000021 20 E7 F9         [24]  368 	JB ACC.7, 1$ 
       000024 15 3D            [12]  369 	dec _mutex 
-                                    370 ;	testparking.c:44: EA = 0;
+                                    370 ;	testparking.c:46: EA = 0;
                                     371 ;	assignBit
       000026 C2 AF            [12]  372 	clr	_EA
-                                    373 ;	testparking.c:45: if( Token == '0' ){ 
+                                    373 ;	testparking.c:47: if( tok == '0' ){ 
       000028 74 30            [12]  374 	mov	a,#0x30
-      00002A B5 3B 59         [24]  375 	cjne	a,_Token,00134$
-                                    376 ;	testparking.c:46: Token = car_name[cur_thread];
+      00002A B5 3B 59         [24]  375 	cjne	a,_tok,00134$
+                                    376 ;	testparking.c:48: tok = car_name[cur_thread];
       00002D E5 35            [12]  377 	mov	a,_cur_thread
       00002F 24 2B            [12]  378 	add	a,#_car_name
       000031 F9               [12]  379 	mov	r1,a
-      000032 87 3B            [24]  380 	mov	_Token,@r1
-                                    381 ;	testparking.c:47: print(car_name[cur_thread],'i');
+      000032 87 3B            [24]  380 	mov	_tok,@r1
+                                    381 ;	testparking.c:49: print(car_name[cur_thread],'i');
       000034 43 89 20         [24]  382 	orl	_TMOD,#0x20
       000037 75 8D FA         [24]  383 	mov	_TH1,#0xfa
       00003A 75 98 50         [24]  384 	mov	_SCON,#0x50
@@ -426,15 +426,15 @@
       000082 F5 2A            [12]  426 	mov	_id,a
       000084 80 BC            [24]  427 	sjmp	00175$
       000086                        428 00134$:
-                                    429 ;	testparking.c:48: }else if( Token2 == '0' ){
+                                    429 ;	testparking.c:50: }else if( tok2 == '0' ){
       000086 74 30            [12]  430 	mov	a,#0x30
-      000088 B5 3F 56         [24]  431 	cjne	a,_Token2,00135$
-                                    432 ;	testparking.c:49: Token2 = car_name[cur_thread];
+      000088 B5 3F 56         [24]  431 	cjne	a,_tok2,00135$
+                                    432 ;	testparking.c:51: tok2 = car_name[cur_thread];
       00008B E5 35            [12]  433 	mov	a,_cur_thread
       00008D 24 2B            [12]  434 	add	a,#_car_name
       00008F F9               [12]  435 	mov	r1,a
-      000090 87 3F            [24]  436 	mov	_Token2,@r1
-                                    437 ;	testparking.c:50: print(car_name[cur_thread],'i');
+      000090 87 3F            [24]  436 	mov	_tok2,@r1
+                                    437 ;	testparking.c:52: print(car_name[cur_thread],'i');
       000092 43 89 20         [24]  438 	orl	_TMOD,#0x20
       000095 75 8D FA         [24]  439 	mov	_TH1,#0xfa
       000098 75 98 50         [24]  440 	mov	_SCON,#0x50
@@ -480,12 +480,12 @@
       0000DD F5 2A            [12]  480 	mov	_id,a
       0000DF 80 BF            [24]  481 	sjmp	00178$
       0000E1                        482 00135$:
-                                    483 ;	testparking.c:52: EA = 1;
+                                    483 ;	testparking.c:54: EA = 1;
                                     484 ;	assignBit
       0000E1 D2 AF            [12]  485 	setb	_EA
-                                    486 ;	testparking.c:53: SemaphoreSignal(mutex);
+                                    486 ;	testparking.c:55: SemaphoreSignal(mutex);
       0000E3 05 3D            [12]  487 	INC _mutex 
-                                    488 ;	testparking.c:55: delay(2);
+                                    488 ;	testparking.c:57: delay(2);
       0000E5 E5 35            [12]  489 	mov	a,_cur_thread
       0000E7 24 20            [12]  490 	add	a,#_time_temp
       0000E9 F9               [12]  491 	mov	r1,a
@@ -499,19 +499,19 @@
       0000F4 F9               [12]  499 	mov	r1,a
       0000F5 E7               [12]  500 	mov	a,@r1
       0000F6 B5 39 F7         [24]  501 	cjne	a,_time,00136$
-                                    502 ;	testparking.c:57: EA = 0;
+                                    502 ;	testparking.c:59: EA = 0;
                                     503 ;	assignBit
       0000F9 C2 AF            [12]  504 	clr	_EA
-                                    505 ;	testparking.c:58: if( Token == car_name[cur_thread] ){
+                                    505 ;	testparking.c:60: if( tok == car_name[cur_thread] ){
       0000FB E5 35            [12]  506 	mov	a,_cur_thread
       0000FD 24 2B            [12]  507 	add	a,#_car_name
       0000FF F9               [12]  508 	mov	r1,a
       000100 E7               [12]  509 	mov	a,@r1
       000101 FF               [12]  510 	mov	r7,a
-      000102 B5 3B 55         [24]  511 	cjne	a,_Token,00172$
-                                    512 ;	testparking.c:59: Token = '0';
-      000105 75 3B 30         [24]  513 	mov	_Token,#0x30
-                                    514 ;	testparking.c:60: print(car_name[cur_thread], 'o');
+      000102 B5 3B 55         [24]  511 	cjne	a,_tok,00172$
+                                    512 ;	testparking.c:61: tok = '0';
+      000105 75 3B 30         [24]  513 	mov	_tok,#0x30
+                                    514 ;	testparking.c:62: print(car_name[cur_thread], 'o');
       000108 43 89 20         [24]  515 	orl	_TMOD,#0x20
       00010B 75 8D FA         [24]  516 	mov	_TH1,#0xfa
       00010E 75 98 50         [24]  517 	mov	_SCON,#0x50
@@ -559,16 +559,16 @@
       000156 F5 2A            [12]  559 	mov	_id,a
       000158 80 BC            [24]  560 	sjmp	00181$
       00015A                        561 00172$:
-                                    562 ;	testparking.c:61: }else if( Token2 == car_name[cur_thread] ){ 
+                                    562 ;	testparking.c:63: }else if( tok2 == car_name[cur_thread] ){ 
       00015A E5 35            [12]  563 	mov	a,_cur_thread
       00015C 24 2B            [12]  564 	add	a,#_car_name
       00015E F9               [12]  565 	mov	r1,a
       00015F E7               [12]  566 	mov	a,@r1
       000160 FF               [12]  567 	mov	r7,a
-      000161 B5 3F 52         [24]  568 	cjne	a,_Token2,00173$
-                                    569 ;	testparking.c:62: Token2 = '0';
-      000164 75 3F 30         [24]  570 	mov	_Token2,#0x30
-                                    571 ;	testparking.c:63: print(car_name[cur_thread], 'o');
+      000161 B5 3F 52         [24]  568 	cjne	a,_tok2,00173$
+                                    569 ;	testparking.c:64: tok2 = '0';
+      000164 75 3F 30         [24]  570 	mov	_tok2,#0x30
+                                    571 ;	testparking.c:65: print(car_name[cur_thread], 'o');
       000167 43 89 20         [24]  572 	orl	_TMOD,#0x20
       00016A 75 8D FA         [24]  573 	mov	_TH1,#0xfa
       00016D 75 98 50         [24]  574 	mov	_SCON,#0x50
@@ -614,100 +614,100 @@
       0001B2 F5 2A            [12]  614 	mov	_id,a
       0001B4 80 BF            [24]  615 	sjmp	00184$
       0001B6                        616 00173$:
-                                    617 ;	testparking.c:65: EA = 1;
+                                    617 ;	testparking.c:67: EA = 1;
                                     618 ;	assignBit
       0001B6 D2 AF            [12]  619 	setb	_EA
-                                    620 ;	testparking.c:66: SemaphoreSignal(empty);
+                                    620 ;	testparking.c:68: SemaphoreSignal(empty);
       0001B8 05 3E            [12]  621 	INC _empty 
-                                    622 ;	testparking.c:67: SemaphoreSignal(next_car);
+                                    622 ;	testparking.c:69: SemaphoreSignal(next_car);
       0001BA 05 3A            [12]  623 	INC _next_car 
-                                    624 ;	testparking.c:68: ThreadExit();
-                                    625 ;	testparking.c:70: } 
+                                    624 ;	testparking.c:70: ThreadExit();
+                                    625 ;	testparking.c:72: } 
       0001BC 02 04 0D         [24]  626 	ljmp	_ThreadExit
                                     627 ;------------------------------------------------------------
                                     628 ;Allocation info for local variables in function 'main'
                                     629 ;------------------------------------------------------------
-                                    630 ;	testparking.c:72: void main(void) {
+                                    630 ;	testparking.c:74: void main(void) {
                                     631 ;	-----------------------------------------
                                     632 ;	 function main
                                     633 ;	-----------------------------------------
       0001BF                        634 _main:
-                                    635 ;	testparking.c:73: SemaphoreCreate(mutex, 1);
+                                    635 ;	testparking.c:75: SemaphoreCreate(mutex, 1);
       0001BF 75 3D 01         [24]  636 	mov	_mutex,#0x01
-                                    637 ;	testparking.c:74: SemaphoreCreate(empty,2);
+                                    637 ;	testparking.c:76: SemaphoreCreate(empty,2);
       0001C2 75 3E 02         [24]  638 	mov	_empty,#0x02
-                                    639 ;	testparking.c:75: SemaphoreCreate(next_car, 0);
+                                    639 ;	testparking.c:77: SemaphoreCreate(next_car, 0);
       0001C5 75 3A 00         [24]  640 	mov	_next_car,#0x00
-                                    641 ;	testparking.c:77: EA = 1;
+                                    641 ;	testparking.c:79: EA = 1;
                                     642 ;	assignBit
       0001C8 D2 AF            [12]  643 	setb	_EA
-                                    644 ;	testparking.c:79: Token = '0';
-      0001CA 75 3B 30         [24]  645 	mov	_Token,#0x30
-                                    646 ;	testparking.c:80: Token2 = '0';
-      0001CD 75 3F 30         [24]  647 	mov	_Token2,#0x30
-                                    648 ;	testparking.c:81: car = '1';
+                                    644 ;	testparking.c:81: tok = '0';
+      0001CA 75 3B 30         [24]  645 	mov	_tok,#0x30
+                                    646 ;	testparking.c:82: tok2 = '0';
+      0001CD 75 3F 30         [24]  647 	mov	_tok2,#0x30
+                                    648 ;	testparking.c:83: car = '1';
       0001D0 75 3C 31         [24]  649 	mov	_car,#0x31
-                                    650 ;	testparking.c:83: car_id = ThreadCreate( Producer );
+                                    650 ;	testparking.c:85: car_id = ThreadCreate( Producer );
       0001D3 90 00 14         [24]  651 	mov	dptr,#_Producer
       0001D6 12 03 32         [24]  652 	lcall	_ThreadCreate
       0001D9 85 82 2F         [24]  653 	mov	_car_id,dpl
-                                    654 ;	testparking.c:84: car_name[ car_id ] = car;
+                                    654 ;	testparking.c:86: car_name[ car_id ] = car;
       0001DC E5 2F            [12]  655 	mov	a,_car_id
       0001DE 24 2B            [12]  656 	add	a,#_car_name
       0001E0 F8               [12]  657 	mov	r0,a
       0001E1 A6 3C            [24]  658 	mov	@r0,_car
-                                    659 ;	testparking.c:85: car = car+1;
+                                    659 ;	testparking.c:87: car = car+1;
       0001E3 E5 3C            [12]  660 	mov	a,_car
       0001E5 04               [12]  661 	inc	a
       0001E6 F5 3C            [12]  662 	mov	_car,a
-                                    663 ;	testparking.c:87: car_id = ThreadCreate( Producer );
+                                    663 ;	testparking.c:89: car_id = ThreadCreate( Producer );
       0001E8 90 00 14         [24]  664 	mov	dptr,#_Producer
       0001EB 12 03 32         [24]  665 	lcall	_ThreadCreate
       0001EE 85 82 2F         [24]  666 	mov	_car_id,dpl
-                                    667 ;	testparking.c:88: car_name[ car_id  ] = car;
+                                    667 ;	testparking.c:90: car_name[ car_id  ] = car;
       0001F1 E5 2F            [12]  668 	mov	a,_car_id
       0001F3 24 2B            [12]  669 	add	a,#_car_name
       0001F5 F8               [12]  670 	mov	r0,a
       0001F6 A6 3C            [24]  671 	mov	@r0,_car
-                                    672 ;	testparking.c:89: car = car+1;
+                                    672 ;	testparking.c:91: car = car+1;
       0001F8 E5 3C            [12]  673 	mov	a,_car
       0001FA 04               [12]  674 	inc	a
       0001FB F5 3C            [12]  675 	mov	_car,a
-                                    676 ;	testparking.c:91: car_id = ThreadCreate( Producer );
+                                    676 ;	testparking.c:93: car_id = ThreadCreate( Producer );
       0001FD 90 00 14         [24]  677 	mov	dptr,#_Producer
       000200 12 03 32         [24]  678 	lcall	_ThreadCreate
       000203 85 82 2F         [24]  679 	mov	_car_id,dpl
-                                    680 ;	testparking.c:92: car_name[ car_id  ] = car;
+                                    680 ;	testparking.c:94: car_name[ car_id  ] = car;
       000206 E5 2F            [12]  681 	mov	a,_car_id
       000208 24 2B            [12]  682 	add	a,#_car_name
       00020A F8               [12]  683 	mov	r0,a
       00020B A6 3C            [24]  684 	mov	@r0,_car
-                                    685 ;	testparking.c:93: car = car+1;
+                                    685 ;	testparking.c:95: car = car+1;
       00020D E5 3C            [12]  686 	mov	a,_car
       00020F FF               [12]  687 	mov	r7,a
       000210 04               [12]  688 	inc	a
       000211 F5 3C            [12]  689 	mov	_car,a
-                                    690 ;	testparking.c:94: while(time < 0x1f){
+                                    690 ;	testparking.c:96: while(time < 0x1f){
       000213                        691 00101$:
       000213 74 E1            [12]  692 	mov	a,#0x100 - 0x1f
       000215 25 39            [12]  693 	add	a,_time
       000217 40 31            [24]  694 	jc	00103$
-                                    695 ;	testparking.c:95: SemaphoreWaitBody(next_car, L(__COUNTER__) );
+                                    695 ;	testparking.c:97: SemaphoreWaitBody(next_car, L(__COUNTER__) );
       000219                        696 		2$:
       000219 E5 3A            [12]  697 	MOV A, _next_car 
       00021B 60 FC            [24]  698 	JZ 2$ 
       00021D 20 E7 F9         [24]  699 	JB ACC.7, 2$ 
       000220 15 3A            [12]  700 	dec _next_car 
-                                    701 ;	testparking.c:96: car_id = ThreadCreate( Producer );
+                                    701 ;	testparking.c:98: car_id = ThreadCreate( Producer );
       000222 90 00 14         [24]  702 	mov	dptr,#_Producer
       000225 12 03 32         [24]  703 	lcall	_ThreadCreate
       000228 85 82 2F         [24]  704 	mov	_car_id,dpl
-                                    705 ;	testparking.c:100: car_name[ car_id  ] = car;
+                                    705 ;	testparking.c:102: car_name[ car_id  ] = car;
       00022B E5 2F            [12]  706 	mov	a,_car_id
       00022D 24 2B            [12]  707 	add	a,#_car_name
       00022F F8               [12]  708 	mov	r0,a
       000230 A6 3C            [24]  709 	mov	@r0,_car
-                                    710 ;	testparking.c:101: car = (car == '5') ? '1' : car+1;
+                                    710 ;	testparking.c:103: car = (car == '5') ? '1' : car+1;
       000232 74 35            [12]  711 	mov	a,#0x35
       000234 B5 3C 06         [24]  712 	cjne	a,_car,00106$
       000237 7E 31            [12]  713 	mov	r6,#0x31
@@ -725,25 +725,25 @@
       000246 8E 3C            [24]  725 	mov	_car,r6
       000248 80 C9            [24]  726 	sjmp	00101$
       00024A                        727 00103$:
-                                    728 ;	testparking.c:103: ThreadExit();
-                                    729 ;	testparking.c:104: }
+                                    728 ;	testparking.c:105: ThreadExit();
+                                    729 ;	testparking.c:106: }
       00024A 02 04 0D         [24]  730 	ljmp	_ThreadExit
                                     731 ;------------------------------------------------------------
                                     732 ;Allocation info for local variables in function '_sdcc_gsinit_startup'
                                     733 ;------------------------------------------------------------
-                                    734 ;	testparking.c:106: void _sdcc_gsinit_startup(void) {
+                                    734 ;	testparking.c:108: void _sdcc_gsinit_startup(void) {
                                     735 ;	-----------------------------------------
                                     736 ;	 function _sdcc_gsinit_startup
                                     737 ;	-----------------------------------------
       00024D                        738 __sdcc_gsinit_startup:
-                                    739 ;	testparking.c:109: __endasm;
+                                    739 ;	testparking.c:111: __endasm;
       00024D 02 02 5C         [24]  740 	ljmp	_Bootstrap
-                                    741 ;	testparking.c:110: }
+                                    741 ;	testparking.c:112: }
       000250 22               [24]  742 	ret
                                     743 ;------------------------------------------------------------
                                     744 ;Allocation info for local variables in function '_mcs51_genRAMCLEAR'
                                     745 ;------------------------------------------------------------
-                                    746 ;	testparking.c:112: void _mcs51_genRAMCLEAR(void) {}
+                                    746 ;	testparking.c:114: void _mcs51_genRAMCLEAR(void) {}
                                     747 ;	-----------------------------------------
                                     748 ;	 function _mcs51_genRAMCLEAR
                                     749 ;	-----------------------------------------
@@ -752,7 +752,7 @@
                                     752 ;------------------------------------------------------------
                                     753 ;Allocation info for local variables in function '_mcs51_genXINIT'
                                     754 ;------------------------------------------------------------
-                                    755 ;	testparking.c:113: void _mcs51_genXINIT(void) {}
+                                    755 ;	testparking.c:115: void _mcs51_genXINIT(void) {}
                                     756 ;	-----------------------------------------
                                     757 ;	 function _mcs51_genXINIT
                                     758 ;	-----------------------------------------
@@ -761,7 +761,7 @@
                                     761 ;------------------------------------------------------------
                                     762 ;Allocation info for local variables in function '_mcs51_genXRAMCLEAR'
                                     763 ;------------------------------------------------------------
-                                    764 ;	testparking.c:114: void _mcs51_genXRAMCLEAR(void) {}
+                                    764 ;	testparking.c:116: void _mcs51_genXRAMCLEAR(void) {}
                                     765 ;	-----------------------------------------
                                     766 ;	 function _mcs51_genXRAMCLEAR
                                     767 ;	-----------------------------------------
@@ -770,14 +770,14 @@
                                     770 ;------------------------------------------------------------
                                     771 ;Allocation info for local variables in function 'timer0_ISR'
                                     772 ;------------------------------------------------------------
-                                    773 ;	testparking.c:115: void timer0_ISR(void) __interrupt(1) {
+                                    773 ;	testparking.c:117: void timer0_ISR(void) __interrupt(1) {
                                     774 ;	-----------------------------------------
                                     775 ;	 function timer0_ISR
                                     776 ;	-----------------------------------------
       000254                        777 _timer0_ISR:
-                                    778 ;	testparking.c:118: __endasm;
+                                    778 ;	testparking.c:120: __endasm;
       000254 02 02 82         [24]  779 	ljmp	_myTimer0Handler
-                                    780 ;	testparking.c:119: }
+                                    780 ;	testparking.c:121: }
       000257 32               [24]  781 	reti
                                     782 ;	eliminated unneeded mov psw,# (no regs used in bank)
                                     783 ;	eliminated unneeded push/pop not_psw

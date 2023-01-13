@@ -3,7 +3,7 @@
 #include "preemptive.h"
 
 __data __at (0x3A) char buffer;
-__data __at (0x3B) char Token;
+__data __at (0x3B) char tok;
 __data __at (0x3C) char full;
 __data __at (0x3D) char mutex;
 __data __at (0x3E) char empty;
@@ -11,7 +11,7 @@ __data __at (0x3E) char empty;
 #define LABEL(x) x##$
 
 void Producer(void) {
-		Token = 'A';
+		tok = 'A';
         while (1) {
                 /* @@@ [6 pt]
                  * wait for the buffer to be available, 
@@ -20,8 +20,8 @@ void Producer(void) {
                 SemaphoreWaitBody(empty, L(__COUNTER__) );
                 SemaphoreWaitBody(mutex, L(__COUNTER__) );
                 __critical{
-                buffer = Token;
-                Token = ( Token == 'Z' ) ? 'A' :  Token + 1;
+                buffer = tok;
+                tok = ( tok == 'Z' ) ? 'A' :  tok + 1;
                 }
                 SemaphoreSignal(mutex);
                 SemaphoreSignal(full);
