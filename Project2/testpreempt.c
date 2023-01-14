@@ -3,12 +3,12 @@
 #include "preemptive.h"
 
 __data __at (0x3A) char buffer;
-__data __at (0x3B) char tok;
+__data __at (0x3B) char spot;
 __data __at (0x3C) char buffer_full;
 
 
 void Producer(void) {
-		tok = 'A';
+		spot = 'A';
         while (1) {
                 /* @@@ [6 pt]
                  * wait for the buffer to be available, 
@@ -17,9 +17,9 @@ void Producer(void) {
                     //ThreadYield();
                 }
                 __critical{
-                buffer = tok;
+                buffer = spot;
                 buffer_full = 1;
-                tok = ( tok == 'Z' ) ? 'A' :  tok + 1;
+                spot = ( spot == 'Z' ) ? 'A' :  spot + 1;
                 }
         }
 }

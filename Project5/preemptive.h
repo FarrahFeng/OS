@@ -8,13 +8,12 @@
 __data __at (0x35) char cur_thread;
 __data __at (0x39) unsigned char time;
 __data __at (0x24) unsigned char timer;
-__data __at (0x20) unsigned char time_temp[4]; // 0~3
+__data __at (0x20) unsigned char time_temp[4]; 
 
 /*
 delay n time unit, n:unsigned char (larger than 1 second is not usefuls)
 not an exact delay but is a delay for “at least n time units” and “less than (n + 0.5) time units” 
 */ 
-
 #define delay(n)\
         time_temp[cur_thread] = time + n;\
         while( time_temp[cur_thread] != time ){}\
@@ -56,7 +55,6 @@ void ThreadYield(void);                  // can resume control after ThreadYield
 void ThreadExit(void);
 void myTimer0Handler();
 
-// void delay(unsigned char n);
 unsigned char now(void);
 
 #endif // __PREEMPTIVE_H__

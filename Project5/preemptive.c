@@ -80,7 +80,7 @@ void Bootstrap(void) {
 }
 // ISR for timer 0, serves purpose for preemption
 void myTimer0Handler(){
-    EA = 0;
+    EA = 0;             // disable interrupt
     SAVESTATE;
     // preserve value of registers(RO-R7 values can't be restored by RESTORESTATE)
     __asm
@@ -102,24 +102,19 @@ void myTimer0Handler(){
         PUSH ACC
     __endasm;
 
-    timer = timer + 1;
-    if(timer==8){ time = time + 1; timer = 0;}
+    timer = timer + 1;  // enter ISR then add 1
+    if(timer == 8){ 
+        timer = 0;
+        time = time + 1; 
+    }         
     
-    do{
-    cur_thread = (cur_thread < 3 ) ?  cur_thread+1 : 0;
-    if( cur_thread == 0 ){if( mask&1 ){break;}}
-    else if( cur_thread == 1 ){if( mask&2 ){break;}}
-    else if( cur_thread == 2 ){if( mask&4 ){break;}}
-    else if( cur_thread == 3 ){if( mask&8 ){break;}}   
+   do{
+        cur_thread = (cur_thread < 3 ) ?  (cur_thread+1) : 0;
+        if( cur_thread == 0 && (mask & 1) )break;
+        else if( cur_thread == 1 && (mask & 2) )break;
+        else if( cur_thread == 2 && (mask & 4))break;
+        else if( cur_thread == 3 && (mask & 8))break; 
     } while (1);
-      /*
-      do{
-         cur_thread = (cur_thread < 3 ) ?  (cur_thread+1) : 0;
-         if( mask & (1<<cur_thread) ){
-            break;
-         }      
-      } while (1);
-      */
 
     __asm
         POP ACC
@@ -212,7 +207,7 @@ ThreadID ThreadCreate(FunctionPtr fp) {
         // h. set SP to the location before creating of new thread
          SP = sp_temp;
          //i.
-        EA = 1;
+         EA = 1;
          return new_thread;
         
          
@@ -251,7 +246,6 @@ void ThreadExit(void) {
         // delete thread by clearing the bit for the current thread from the bit mask ?
         // if cur_thread = 0, mask -=0b0001; cur_thread = 1, mask-=0b0010 ... ?
         
-        // find next thread to run and set current thread to it?
         if(cur_thread == 0) mask = mask - 1;
         else if( cur_thread == 1 )mask = mask - 2;
         else if( cur_thread == 2 )mask = mask - 4;

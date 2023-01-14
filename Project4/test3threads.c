@@ -3,11 +3,11 @@
 #include "preemptive.h"
 
 __data __at (0x3A) char buffer;
-__data __at (0x3B) char tok;
+__data __at (0x3B) char spot;
 __data __at (0x3C) char full;
 __data __at (0x3D) char mutex;
 __data __at (0x3E) char empty;
-__data __at (0x3F) char tok2;
+__data __at (0x3F) char spot2;
 __data __at (0x2A) char turn1;
 __data __at (0x2B) char turn2;
 
@@ -15,7 +15,7 @@ __data __at (0x2B) char turn2;
 #define LABEL(x) x##$
 
 void Producer1(void) {
-		tok = 'A';
+		spot = 'A';
         while (1) {
                 /* @@@ [6 pt]
                  * wait for the buffer to be available, 
@@ -24,8 +24,8 @@ void Producer1(void) {
                 SemaphoreWaitBody(empty, L(__COUNTER__) );
                 SemaphoreWaitBody(mutex, L(__COUNTER__) );
                 __critical{
-                buffer = tok;
-                tok = ( tok == 'Z' ) ? 'A' :  tok + 1;
+                buffer = spot;
+                spot = ( spot == 'Z' ) ? 'A' :  spot + 1;
                 //P1 = 0x0;
                 }
                 SemaphoreSignal(mutex);
@@ -35,7 +35,7 @@ void Producer1(void) {
         }
 }
 void Producer2(void) {
-		tok2 = '0';
+		spot2 = '0';
         while (1) {
                 /* @@@ [6 pt]
                  * wait for the buffer to be available, 
@@ -44,8 +44,8 @@ void Producer2(void) {
                 SemaphoreWaitBody(empty, L(__COUNTER__) );
                 SemaphoreWaitBody(mutex, L(__COUNTER__) );
                 __critical{
-                buffer = tok2;
-                tok2 = ( tok2 == '9' ) ? '0' :  tok2 + 1;
+                buffer = spot2;
+                spot2 = ( spot2 == '9' ) ? '0' :  spot2 + 1;
                 //P1 = 0x5;
                 }
                 SemaphoreSignal(mutex);
